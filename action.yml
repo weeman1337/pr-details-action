@@ -40,5 +40,5 @@ runs:
             repo,
           });
           const [pr] = response.data;
-          if (!pr) throw new Error("Pull Request not found!");
-          return pr;
+          if (pr) return pr;
+          core.setFailed("Pull Request not found!");

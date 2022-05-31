@@ -1,0 +1,42 @@
+name: Find PR details
+description: Find details about the PR associated with this workflow run.
+inputs:
+  owner:
+    type: string
+    required: true
+    description: The github username of the owner of the head branch
+  branch:
+    type: string
+    required: true
+    description: The name of the head branch
+outputs:
+  pr_id:
+    description: The ID of the PR found
+    value: ${{ fromJSON(steps.details.outputs.result).number }}
+  head_branch:
+    description: The head branch of the PR found
+    value: ${{ fromJSON(steps.details.outputs.result).head.ref }}
+  base_branch:
+    description: The base branch of the PR found
+    value: ${{ fromJSON(steps.details.outputs.result).base.ref }}
+  data:
+    description: The JSON data of the pull request API object
+    value: ${{ steps.details.outputs.result }})
+runs:
+  using: composite
+  steps:
+    - name: 🔍 Read PR details
+      id: details
+      uses: actions/github-script@v5
+      with:
+        # We need to find the PR number that corresponds to the branch, which we do by searching the GH API
+        # The workflow_run event includes a list of pull requests, but it doesn't get populated for
+        # forked PRs: https://docs.github.com/en/rest/reference/checks#create-a-check-run
+        script: |
+          const [owner, repo] = "${{ github.repository }}".split("/");
+          const response = await github.rest.pulls.list({
+            head: "${{ inputs.owner }}:${{ inputs.branch }}",
+            owner,
+            repo,
+          });
+          return response.data[0];

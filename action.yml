@@ -39,4 +39,6 @@ runs:
             owner,
             repo,
           });
-          return response.data[0];
+          const [pr] = response.data;
+          if (!pr) throw new Error("Pull Request not found!");
+          return pr;

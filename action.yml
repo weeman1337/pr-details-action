@@ -27,7 +27,7 @@ runs:
   steps:
     - name: 🔍 Read PR details
       id: details
-      uses: actions/github-script@v5
+      uses: actions/github-script@v6
       with:
         # We need to find the PR number that corresponds to the branch, which we do by searching the GH API
         # The workflow_run event includes a list of pull requests, but it doesn't get populated for
@@ -51,7 +51,7 @@ runs:
             sort: "updated",
             },
             (response, done) => {
-              const paginatedPR = response.data.find(pr => pr.head && pr.head.label === head);
+              const paginatedPR = response.data.find(pr => pr.head?.label === head);
               if (paginatedPR) {
                 pr = paginatedPR;
                 done();

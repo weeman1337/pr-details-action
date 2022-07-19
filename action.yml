@@ -10,15 +10,15 @@ inputs:
     required: true
     description: The name of the head branch
 outputs:
-  #pr_id:
-    #description: The ID of the PR found
-    #value: ${{ fromJSON(steps.details.outputs.result).number }}
-  #head_branch:
-    #description: The head branch of the PR found
-    #value: ${{ fromJSON(steps.details.outputs.result).head.ref }}
-  #base_branch:
-    #description: The base branch of the PR found
-    #value: ${{ fromJSON(steps.details.outputs.result).base.ref }}
+  pr_id:
+    description: The ID of the PR found
+    value: ${{ fromJSON(steps.details.outputs.result).number }}
+  head_branch:
+    description: The head branch of the PR found
+    value: ${{ fromJSON(steps.details.outputs.result).head.ref }}
+  base_branch:
+    description: The base branch of the PR found
+    value: ${{ fromJSON(steps.details.outputs.result).base.ref }}
   data:
     description: The JSON data of the pull request API object
     value: ${{ steps.details.outputs.result }})
@@ -51,7 +51,7 @@ runs:
             sort: "updated",
             },
             (response, done) => {
-              const paginatedPR = response.data.find(pr => pr.head?.label === head);
+              const paginatedPR = response.data.find(pr => pr.head && pr.head.label === head);
               if (paginatedPR) {
                 pr = paginatedPR;
                 done();
